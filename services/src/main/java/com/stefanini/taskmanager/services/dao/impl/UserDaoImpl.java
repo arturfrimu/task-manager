@@ -1,110 +1,89 @@
 package com.stefanini.taskmanager.services.dao.impl;
 
+import com.stefanini.taskmanager.services.dao.UserDao;
+import com.stefanini.taskmanager.services.model.Group;
+import com.stefanini.taskmanager.services.model.Task;
+import com.stefanini.taskmanager.services.model.User;
+import org.apache.log4j.Logger;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.hibernate.Transaction;
 
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+public class UserDaoImpl extends BaseDaoImpl<User> implements UserDao {
+    static final Logger logger = Logger.getLogger(UserDaoImpl.class);
 
-import com.stefanini.taskmanager.services.dao.UserDao;
-import com.stefanini.taskmanager.services.database.DataBaseConnection;
-import com.stefanini.taskmanager.services.model.*;
+    public UserDaoImpl(SessionFactory sessionFactory) {
+        super(sessionFactory, new User());
+    }
 
-public class UserDaoImpl implements UserDao {
-    static Logger logger = Logger.getLogger(UserDaoImpl.class);
 
+    @Override
     public List<User> selectAllUsers() {
-        List<User> users = new ArrayList<User>();
-        Statement statement;
-        try {
-            statement = DataBaseConnection.getInstance().getDBConnection().createStatement();
-            String sql = "SELECT * FROM USERS U LEFT JOIN TASK T on T.USER_ID = U.ID OR T.GROUP_ID = U.GROUP_ID ORDER BY U.ID ASC";
-            ResultSet res = statement.executeQuery(sql);
-
-            while (res.next()) {
-                User user = null;
-                long userId = res.getLong("U.ID");
-                long taskId = res.getLong("T.ID");
-                user = users.stream().filter(element -> element.getId().equals(userId)).findAny().orElse(null);
-                if(user==null)	{
-                    user = new User();
-                    user.setId(res.getLong("U.ID"));
-                    user.setFirstName(res.getString("FIRST_NAME"));
-                    user.setLastName(res.getString("LAST_NAME"));
-                    user.setUserName(res.getString("USER_NAME"));
-                    user.setGroupId(res.getLong("GROUP_ID"));
-                    users.add(user);
-                }
-                if(user!=null && taskId!=0) {
-                    Task task = new Task();
-                    task.setId(res.getLong("T.ID"));
-                    task.setTitle(res.getString("TITLE"));
-                    task.setDescription(res.getString("DESCRIPTION"));
-                    task.setGroupId(res.getLong("GROUP_ID"));
-                    task.setUserId(res.getLong("USER_ID"));
-                    user.addTask(task);
-                }
-            }
-            logger.trace(users);
-        } catch (Exception e) {
-            logger.error(e);
-            logger.info(users);
-        }
-        return users;
+        return findAll();
     }
 
-    public User selectUserByUsername(String username)  {
-        User user = new User();
-        Statement statement;
-        try {
-            statement = DataBaseConnection.getInstance().getDBConnection().createStatement();
-            String sql = "SELECT * FROM USERS U LEFT JOIN TASK T on T.USER_ID = U.ID OR T.GROUP_ID = U.GROUP_ID WHERE U.USER_NAME = '" + username + "'";
-            ResultSet res = statement.executeQuery(sql);
-
-            while (res.next()) {
-                user.setId(res.getLong("U.ID"));
-                user.setFirstName(res.getString("FIRST_NAME"));
-                user.setLastName(res.getString("LAST_NAME"));
-                user.setUserName(res.getString("USER_NAME"));
-                user.setGroupId(res.getLong("GROUP_ID"));
-
-                Task task = new Task();
-
-                task.setId(res.getLong("T.ID"));
-                task.setTitle(res.getString("TITLE"));
-                task.setDescription(res.getString("DESCRIPTION"));
-                task.setGroupId(res.getLong("GROUP_ID"));
-                task.setUserId(res.getLong("USER_ID"));
-                user.addTask(task);
-            }
-        } catch (Exception e) {
-            logger.error(e);
-            logger.info(user);
+    @Override
+    public List<Task> selectUserTasks(String userName) {
+        List<Task> tasks = null;
+        try(Session session = getSession()) {
+            List<User> users = session.createQuery("from " + User.class.getName() + " where userName = '" + userName + "'").getResultList();
+            tasks = users.get(0).getUserTasks();
+            logger.trace("\n\n" + userName + "'S TASKS ARE SELECTED SUCCESSFULLY");
+        } catch (Exception e){
+            logger.error("\n\n" + e + "\n");
         }
-        return user;
+        return tasks;
+    }
+    @Override
+    public User saveUser(String firstName, String lastName, String username) {
+        return save(new User(firstName, lastName, username));
     }
 
-    public void saveUser(String firstName, String lastName, String username) {
-        PreparedStatement preparedStatement;
-        try {
-            preparedStatement = DataBaseConnection.getInstance().getDBConnection()
-                    .prepareStatement("INSERT INTO USERS (FIRST_NAME, LAST_NAME, USER_NAME) VALUES(?, ?, ?)");
-
-            preparedStatement.setString(1, firstName);
-            preparedStatement.setString(2, lastName);
-            preparedStatement.setString(3, username);
-
-            preparedStatement.executeUpdate();
-            logger.trace("User by username " + username + " was inserted");
-        } catch (SQLException e) {
-            logger.error(e);
-            logger.info("Can't save user because username ''" + username + "'' already exists into database or username is null");
+    @Override
+    public void saveUserWithTask(String firstName, String lastName, String userName, String title, String description) {
+        try (Session session = getSession()) {
+            User user = new User(firstName, lastName, userName);
+            user.addTask(new Task(title, description));
+            Transaction transaction = null;
+            try {
+                transaction = session.beginTransaction();
+                session.save(user);
+                transaction.commit();
+                logger.trace("\n\nUSER WITH USERNAME " + userName + " WAS SAVED SUCCESSFULLY\n");
+                logger.trace("\n\n" + user + "\n");
+            } catch (Exception ex) {
+                if (transaction != null)
+                    transaction.rollback();
+                throw ex;
+            }
         } catch (Exception e) {
-            logger.error(e);
+            logger.error("\n\n" + e + "\n\n");
+        }
+    }
+
+    @Override
+    public void assignUserToGroup(String userName, String groupName) {
+        try (Session session = getSession()) {
+            Transaction transaction = null;
+            try {
+                transaction = session.beginTransaction();
+                List<User> users = session.createQuery("from User where userName = '" + userName + "'").getResultList();
+                User user = users.get(0);
+                List<Group> groups = session.createQuery("from Group where name = '" + groupName + "'").getResultList();
+                Group group = groups.get(0);
+                user.setGroup(group);
+                session.save(user);
+                transaction.commit();
+                logger.trace("\n\nUSER WITH USERNAME " + userName + " WAS ASSIGNED SUCCESSFULLY TO GROUP " + groupName + "\n\n");
+            } catch (Exception ex) {
+                if (transaction != null)
+                    transaction.rollback();
+                throw ex;
+            }
+        } catch (Exception e) {
+            logger.error("\n\n" + e + "\n\n");
         }
     }
 }
