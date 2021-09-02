@@ -1,15 +1,34 @@
 package com.stefanini.taskmanager.services.model;
 
+import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 
+@Entity
+@Table(name = "USER")
 public class User {
+    @Id
+    @GeneratedValue(strategy=GenerationType.IDENTITY)
+    @Column(name = "ID")
     private Long id;
+    @Column(name = "FIRST_NAME")
     private String firstName;
+    @Column(name = "LAST_NAME")
     private String lastName;
+    @Column(name = "USER_NAME")
     private String userName;
-    private Long groupId;
-    private List<Task> tasks = new ArrayList<Task>();
+
+    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @JoinTable(
+            name = "TASK_TO_USER",
+            joinColumns = {@JoinColumn(name = "USER_ID")},
+            inverseJoinColumns = {@JoinColumn(name = "TASK_ID")}
+    )
+    private List<Task> userTasks;
+
+    @ManyToOne
+    @JoinColumn(name="GROUP_ID")
+    private Group group;
 
     public User(String firstName, String lastName, String userName) {
         this.firstName = firstName;
@@ -17,20 +36,15 @@ public class User {
         this.userName = userName;
     }
 
-    public User() {
+    public Group getGroup() {
+        return group;
     }
 
-    public Long getGroupId() {
-        return groupId;
+    public void setGroup(Group group) {
+        this.group = group;
     }
 
-    public void setGroupId(Long groupId) {
-        this.groupId = groupId;
-    }
-
-    public void setTasks(List<Task> tasks) {
-        this.tasks = tasks;
-    }
+    public User() {}
 
     public Long getId() {
         return id;
@@ -64,27 +78,30 @@ public class User {
         this.userName = userName;
     }
 
-    public List<Task> getTasks() {
-        return tasks;
+    public void setUserTasks(List<Task> userTasks) {
+        this.userTasks = userTasks;
     }
 
-    public void addTask(List<Task> tasks) {
-        this.tasks=tasks;
+    public List<Task> getUserTasks() {
+        return userTasks;
     }
 
     public void addTask(Task task) {
-        if(task != null) {
-            this.tasks.add(task);
-        }
+        if (userTasks == null)
+            userTasks = new ArrayList<>();
+        if (task != null)
+            userTasks.add(task);
     }
 
     @Override
     public String toString() {
-        return "\nUser{" +
-                "firstName='" + firstName + '\'' +
+        return "User{" +
+                "id=" + id +
+                ", firstName='" + firstName + '\'' +
                 ", lastName='" + lastName + '\'' +
                 ", userName='" + userName + '\'' +
-                ", tasks=" + tasks +
+                ", userTasks=" + userTasks +
+                ", group=" + group +
                 '}';
     }
 

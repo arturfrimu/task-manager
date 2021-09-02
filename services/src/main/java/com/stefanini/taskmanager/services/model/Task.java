@@ -1,10 +1,25 @@
 package com.stefanini.taskmanager.services.model;
+
+import javax.persistence.*;
+import java.util.Set;
+
+@Entity
+@Table(name = "TASK")
 public class Task {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "ID")
     private Long id;
+    @Column(name = "TITLE")
     private String title;
+    @Column(name = "DESCRIPTION")
     private String description;
-    private Long groupId;
-    private Long userId;
+
+    @ManyToMany(mappedBy = "groupTasks")
+    private Set<Group> groups;
+
+    @ManyToMany(mappedBy = "userTasks")
+    private Set<User> users;
 
     public Task() {}
 
@@ -13,18 +28,20 @@ public class Task {
         this.description = description;
     }
 
-    public Task(String title, String description, Long groupId) {
-        this.title = title;
-        this.description = description;
-        this.groupId = groupId;
+    public Set<Group> getGroups() {
+        return groups;
     }
 
-    public Task(Long id, String title, String description, Long groupId, Long userId) {
-        this.id = id;
-        this.title = title;
-        this.description = description;
-        this.groupId = groupId;
-        this.userId = userId;
+    public void setGroups(Set<Group> groups) {
+        this.groups = groups;
+    }
+
+    public Set<User> getUsers() {
+        return users;
+    }
+
+    public void setUsers(Set<User> users) {
+        this.users = users;
     }
 
     public Long getId() {
@@ -51,24 +68,12 @@ public class Task {
         this.description = description;
     }
 
-    public Long getGroupId() {
-        return groupId;
-    }
-
-    public void setGroupId(Long groupId) {
-        this.groupId = groupId;
-    }
-
-    public Long getUserId() {
-        return userId;
-    }
-
-    public void setUserId(Long userId) {
-        this.userId = userId;
-    }
-
     @Override
     public String toString() {
-        return "Task [id=" + id + ", title=" + title + ", description=" + description + "]";
+        return "Task{" +
+                "id=" + id +
+                ", title='" + title + '\'' +
+                ", description='" + description + '\'' +
+                '}';
     }
 }
