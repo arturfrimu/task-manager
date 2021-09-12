@@ -16,8 +16,9 @@ public class AddTaskToGroup implements Command {
     }
 
     @Override
-    public void execute() throws Exception {
+    public void execute(){
         TaskService taskService = new TaskServiceImpl();
         taskService.addTaskToGroup(title, description, groupName);
     }
 }
+

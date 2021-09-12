@@ -1,8 +1,9 @@
 package com.stefanini.taskmanager.services.model;
 
 import javax.persistence.*;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
+
 
 @Entity
 @Table(name = "`GROUP`")
@@ -15,44 +16,31 @@ public class Group {
     private String name;
 
     @ManyToMany(cascade = CascadeType.ALL)
-    @JoinTable (
+    @JoinTable(
+
             name = "TASK_TO_GROUP",
             joinColumns = {@JoinColumn(name = "GROUP_ID")},
             inverseJoinColumns = {@JoinColumn(name = "TASK_ID")}
     )
-    private Set<Task> groupTasks;
 
-    @OneToMany(mappedBy="group")
-    private Set<User> users;
+    private List<Task> groupTasks;
 
-    public Group() {}
+    @OneToMany(mappedBy = "group")
+    private List<User> users;
+
+    public Group() {
+    }
 
     public Group(String name) {
         this.name = name;
     }
 
-    public Set<User> getUsers() {
+    public List<User> getUsers() {
         return users;
     }
 
-    public void setUsers(Set<User> users) {
+    public void setUsers(List<User> users) {
         this.users = users;
-    }
-
-    public Set<Task> getGroupTasks() {
-        return groupTasks;
-    }
-
-    public void setGroupTasks(Set<Task> groupTasks) {
-        this.groupTasks = groupTasks;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
     }
 
     public String getName() {
@@ -65,17 +53,9 @@ public class Group {
 
     public void addTask(Task task) {
         if (groupTasks == null)
-            groupTasks = new HashSet<>();
+            groupTasks = new ArrayList<>();
         if (task != null)
             groupTasks.add(task);
-    }
-
-    public void addUser(User user) {
-        if (users == null)
-            users = new HashSet<>();
-        if (user != null)
-            user.setGroup(this);
-        users.add(user);
     }
 
     @Override
@@ -86,3 +66,4 @@ public class Group {
                 '}';
     }
 }
+

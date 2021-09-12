@@ -2,7 +2,6 @@ package com.stefanini.taskmanager.services.utils;
 
 import org.apache.log4j.Logger;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
@@ -12,7 +11,8 @@ public class ReadFromProperties {
     private static InputStream inputStream;
     private static Properties prop;
 
-    public static Properties read(String filename) throws IOException {
+    public static Properties read(String filename) {
+
         try {
             prop = new Properties();
             inputStream = ReadFromProperties.class.getClassLoader().getResourceAsStream(filename);
@@ -21,12 +21,21 @@ public class ReadFromProperties {
             } else {
                 logger.error("property file " + filename + " not found in the classpath");
             }
+
+            inputStream.close();
+
             return prop;
         } catch (Exception e) {
             logger.error(e);
         } finally {
-            if (inputStream != null)
-                inputStream.close();
+            if (inputStream != null) {
+                try {
+                    inputStream.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+
         }
         return prop;
     }

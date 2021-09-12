@@ -14,8 +14,9 @@ public class AssignUserToGroup implements Command {
     }
 
     @Override
-    public void execute() throws Exception {
+    public void execute() {
         UserService userService = new UserServiceImpl();
         userService.assignUserToGroup(username, groupName);
     }
 }
+

@@ -1,22 +1,20 @@
 package com.stefanini.taskmanager.services.dao;
 
 import com.stefanini.taskmanager.services.dao.impl.*;
-import org.hibernate.SessionFactory;
 
-import static com.stefanini.taskmanager.services.database.DatabaseSessionFactory.getInstance;
+public class DaoFactory<T extends BaseDaoImpl> {
+    private final Class<T> clazz;
 
-public class DaoFactory {
-    private final SessionFactory sessionFactory;
-
-    public DaoFactory() {
-        sessionFactory = getInstance().getSessionFactory();
+    public DaoFactory(Class<T> clazz) {
+        this.clazz = clazz;
     }
 
-    public TaskDao getTaskDao() {
-        return new TaskDaoImpl(sessionFactory);
-    }
-
-    public UserDao getUserDao() {
-        return new UserDaoImpl(sessionFactory);
+    public T getDao() {
+        try {
+            return clazz.newInstance();
+        } catch(InstantiationException | IllegalAccessException e){
+            e.printStackTrace();
+        }
+       return null;
     }
 }

@@ -1,5 +1,10 @@
 /.idea/
 target
+<<<<<<< HEAD
+/target
+target/
+=======
 target/
 /access.log
 build/
+>>>>>>> master

@@ -12,7 +12,7 @@ public class ShowUserTasks implements Command {
     }
 
     @Override
-    public void execute() throws Exception {
+    public void execute() {
         UserService userService = new UserServiceImpl();
         userService.selectUserTasks(username);
     }

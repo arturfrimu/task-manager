@@ -1,9 +1,7 @@
 package com.stefanini.taskmanager.launcher.command;
 
 import com.stefanini.taskmanager.launcher.command.impl.*;
-import com.stefanini.taskmanager.services.utils.ReadFromProperties;
 import org.apache.log4j.Logger;
-import org.apache.log4j.PropertyConfigurator;
 
 public class CommandFactory {
     public static final String CREATE_USR_CMD = "-createUser";
@@ -16,10 +14,9 @@ public class CommandFactory {
 
     static Logger logger = Logger.getLogger(CommandFactory.class);
 
-    public static Command getCommand(String [] args) throws Exception {
-        PropertyConfigurator.configure(ReadFromProperties.read("log4j-console.properties"));
+    public static Command getCommand(String[] args) {
         Command command = null;
-        switch(args[0]) {
+        switch (args[0]) {
             case CREATE_USR_CMD:
                 command = new SaveUser(args[1], args[2], args[3]);
                 break;

@@ -16,7 +16,8 @@ public class AddTaskToUser implements Command {
     }
 
     @Override
-    public void execute() throws Exception {
+
+    public void execute(){
         TaskService taskService = new TaskServiceImpl();
         taskService.addTaskToUser(username , title, description);
     }

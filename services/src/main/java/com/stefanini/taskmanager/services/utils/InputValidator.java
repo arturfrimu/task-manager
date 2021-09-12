@@ -15,12 +15,13 @@ public class InputValidator {
 
     public static boolean isValid(String input){
         boolean isValid = false;
-        if (input != null){
+
+        if (input != null && input.length() > 1){
             if (input.startsWith("-fn=")) {
                 isValid = true;
             } else if (input.startsWith("-ln=")) {
                 isValid = true;
-            } else if (input.startsWith("-un=")) {
+            } else if (input.startsWith("-un=") && input.length() < 30) {
                 isValid = true;
             } else if (input.startsWith("-tt=")) {
                 isValid = true;

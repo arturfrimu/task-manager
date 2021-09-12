@@ -6,7 +6,7 @@ import com.stefanini.taskmanager.services.service.impl.UserServiceImpl;
 
 public class ShowAllUsers implements Command {
 
-    public void execute() throws Exception {
+    public void execute(){
         UserService userService = new UserServiceImpl();
         userService.selectAllUsers();
     }

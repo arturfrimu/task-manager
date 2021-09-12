@@ -16,7 +16,8 @@ public class SaveUser implements Command {
     }
 
     @Override
-    public void execute() throws Exception {
+
+    public void execute(){
         UserService userService = new UserServiceImpl();
         userService.saveUser(firstName, lastName, userName);
     }

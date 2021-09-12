@@ -8,7 +8,7 @@ import java.util.List;
 @Table(name = "USER")
 public class User {
     @Id
-    @GeneratedValue(strategy=GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "ID")
     private Long id;
     @Column(name = "FIRST_NAME")
@@ -27,7 +27,7 @@ public class User {
     private List<Task> userTasks;
 
     @ManyToOne
-    @JoinColumn(name="GROUP_ID")
+    @JoinColumn(name = "GROUP_ID")
     private Group group;
 
     public User(String firstName, String lastName, String userName) {
@@ -44,7 +44,8 @@ public class User {
         this.group = group;
     }
 
-    public User() {}
+    public User() {
+    }
 
     public Long getId() {
         return id;
@@ -100,7 +101,6 @@ public class User {
                 ", firstName='" + firstName + '\'' +
                 ", lastName='" + lastName + '\'' +
                 ", userName='" + userName + '\'' +
-                ", userTasks=" + userTasks +
                 ", group=" + group +
                 '}';
     }
