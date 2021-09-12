@@ -19,3 +19,4 @@ public class AssignUserToGroup implements Command {
         userService.assignUserToGroup(username, groupName);
     }
 }
+

@@ -20,6 +20,7 @@ import java.util.Objects;
 import static com.stefanini.taskmanager.services.utils.StringGenerator.lineDown;
 import static com.stefanini.taskmanager.services.utils.StringGenerator.lineUp;
 
+
 public class UserDaoImpl extends BaseDaoImpl<User> implements UserDao {
     static final Logger logger = Logger.getLogger(UserDaoImpl.class);
 
@@ -137,3 +138,4 @@ public class UserDaoImpl extends BaseDaoImpl<User> implements UserDao {
         return user;
     }
 }
+

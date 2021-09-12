@@ -23,6 +23,7 @@ public class TaskServiceImpl implements TaskService {
 
     public Task addTaskToUser(String username, String title, String description) {
         Task task = null;
+
         if (isValid(username) && isValid(title) && isValid(description)) {
             username = subStringInput(username);
             title = subStringInput(title);
@@ -37,6 +38,7 @@ public class TaskServiceImpl implements TaskService {
 
     public Task addTaskToGroup(String title, String description, String groupName) {
         Task task = null;
+
         if (isValid(title) && isValid(description) && isValid(groupName)) {
             title = subStringInput(title);
             description = subStringInput(description);
@@ -47,5 +49,6 @@ public class TaskServiceImpl implements TaskService {
             logger.info(lineUp + "Task can't be added. Invalid credentials format" + lineDown);
         }
         return task;
+
     }
 }

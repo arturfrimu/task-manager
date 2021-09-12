@@ -21,3 +21,4 @@ public class AddTaskToGroup implements Command {
         taskService.addTaskToGroup(title, description, groupName);
     }
 }
+

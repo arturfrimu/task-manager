@@ -1,4 +1,5 @@
 package com.stefanini.taskmanager.services.model;
+
 import javax.persistence.*;
 import java.util.Set;
 
@@ -76,3 +77,4 @@ public class Task {
                 '}';
     }
 }
+

@@ -16,3 +16,4 @@ public interface UserDao {
 
     User assignUserToGroup(String username, String groupName);
 }
+

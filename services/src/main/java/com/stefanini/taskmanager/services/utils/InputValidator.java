@@ -15,6 +15,7 @@ public class InputValidator {
 
     public static boolean isValid(String input){
         boolean isValid = false;
+
         if (input != null && input.length() > 1){
             if (input.startsWith("-fn=")) {
                 isValid = true;

@@ -16,3 +16,4 @@ public interface UserService {
 
     void assignUserToGroup(String username, String groupName);
 }
+

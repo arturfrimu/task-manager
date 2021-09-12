@@ -74,6 +74,7 @@ public class UserServiceImpl implements UserService {
             logger.info("User can't be saved. Invalid credentials format");
         }
         return user;
+
     }
 
     @Override
@@ -87,3 +88,4 @@ public class UserServiceImpl implements UserService {
         }
     }
 }
+

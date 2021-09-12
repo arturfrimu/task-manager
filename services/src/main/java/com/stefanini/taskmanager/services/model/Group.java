@@ -4,6 +4,7 @@ import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 
+
 @Entity
 @Table(name = "`GROUP`")
 public class Group {
@@ -16,10 +17,12 @@ public class Group {
 
     @ManyToMany(cascade = CascadeType.ALL)
     @JoinTable(
+
             name = "TASK_TO_GROUP",
             joinColumns = {@JoinColumn(name = "GROUP_ID")},
             inverseJoinColumns = {@JoinColumn(name = "TASK_ID")}
     )
+
     private List<Task> groupTasks;
 
     @OneToMany(mappedBy = "group")
@@ -63,3 +66,4 @@ public class Group {
                 '}';
     }
 }
+

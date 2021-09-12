@@ -12,6 +12,7 @@ public class ReadFromProperties {
     private static Properties prop;
 
     public static Properties read(String filename) {
+
         try {
             prop = new Properties();
             inputStream = ReadFromProperties.class.getClassLoader().getResourceAsStream(filename);
@@ -20,7 +21,9 @@ public class ReadFromProperties {
             } else {
                 logger.error("property file " + filename + " not found in the classpath");
             }
+
             inputStream.close();
+
             return prop;
         } catch (Exception e) {
             logger.error(e);
@@ -32,6 +35,7 @@ public class ReadFromProperties {
                     e.printStackTrace();
                 }
             }
+
         }
         return prop;
     }
