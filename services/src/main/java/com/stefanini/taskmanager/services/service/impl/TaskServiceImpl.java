@@ -14,7 +14,7 @@ import org.apache.log4j.Logger;
 
 public class TaskServiceImpl implements TaskService {
     static Logger logger = Logger.getLogger(TaskServiceImpl.class);
-    private final TaskDao taskDao;
+    private final TaskDaoImpl taskDao;
 
     public TaskServiceImpl() {
         DaoFactory<TaskDaoImpl> daoFactory = new DaoFactory<>(TaskDaoImpl.class);

@@ -29,11 +29,6 @@ public class UserDaoImpl extends BaseDaoImpl<User> implements UserDao {
     }
 
     @Override
-    public List<User> selectAllUsers() {
-        return findAll();
-    }
-
-    @Override
     public List<Task> selectUserTasks(String userName) {
         List<Task> tasks = null;
         Session session = getSession();
@@ -61,31 +56,6 @@ public class UserDaoImpl extends BaseDaoImpl<User> implements UserDao {
                 session.close();
         }
         return tasks;
-    }
-
-    @Override
-    public User saveUser(User user) {
-        return save(user);
-    }
-
-    @Override
-    public User saveUserWithTask(User user) {
-        Transaction transaction = null;
-        Session session = getSession();
-        try {
-            transaction = session.beginTransaction();
-            session.save(user);
-            transaction.commit();
-            logger.info(lineUp + "USER " + user + " WAS SAVED SUCCESSFULLY\nHE HAS TASKS " + user.getUserTasks() + lineDown);
-        } catch (ConstraintViolationException | IllegalStateException | RollbackException | IllegalArgumentException e) {
-            if (transaction != null)
-                transaction.rollback();
-            logger.error(lineUp + " ---- " + e + lineDown);
-        } finally {
-            if (session != null)
-                session.close();
-        }
-        return user;
     }
 
     @Override

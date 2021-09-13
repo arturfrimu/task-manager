@@ -3,7 +3,6 @@ package com.stefanini.taskmanager.services.service.impl;
 import java.util.List;
 
 import com.stefanini.taskmanager.services.dao.DaoFactory;
-import com.stefanini.taskmanager.services.dao.UserDao;
 import com.stefanini.taskmanager.services.dao.impl.UserDaoImpl;
 import com.stefanini.taskmanager.services.model.Task;
 import com.stefanini.taskmanager.services.model.User;
@@ -18,7 +17,7 @@ import static com.stefanini.taskmanager.services.utils.StringGenerator.lineUp;
 public class UserServiceImpl implements UserService {
     static Logger logger = Logger.getLogger(UserServiceImpl.class);
 
-    private final UserDao userDao;
+    private final UserDaoImpl userDao;
 
     public UserServiceImpl() {
         DaoFactory<UserDaoImpl> daoFactory = new DaoFactory<>(UserDaoImpl.class);
@@ -26,7 +25,7 @@ public class UserServiceImpl implements UserService {
     }
 
     public List<User> selectAllUsers() {
-        return userDao.selectAllUsers();
+        return userDao.findAll();
     }
 
     public List<Task> selectUserTasks(String username) {
@@ -47,7 +46,7 @@ public class UserServiceImpl implements UserService {
             lastName = subStringInput(lastName);
             username = subStringInput(username);
             user = new User(firstName, lastName, username);
-            userDao.saveUser(user);
+            userDao.save(user);
         } else {
             logger.info(lineUp + "User can't be saved. Invalid credentials format" + lineDown);
         }
@@ -64,12 +63,8 @@ public class UserServiceImpl implements UserService {
             title = subStringInput(title);
             description = subStringInput(description);
             user = new User(firstName, lastName, username);
-            try {
-                user.addTask(new Task(title, description));
-            } catch (Exception e) {
-                logger.error(lineUp + " ---- " + e.getCause() + lineDown);
-            }
-            userDao.saveUserWithTask(user);
+            user.addTask(new Task(title, description));
+            userDao.save(user);
         } else {
             logger.info("User can't be saved. Invalid credentials format");
         }
